@@ -47,7 +47,6 @@ def create_crops_archive(image_path, raw_output, zip_path):
             for label, box_str in matches:
                 label = label.strip()
                 # Extract all numbers from the coordinate string (ignoring commas and tags)
-                # Coordinates are typically normalized 0-1000
                 coords = [int(c) for c in re.findall(r"<(\d+)>", box_str)]
                 
                 # Process coordinates in groups of 4 (x1, y1, x2, y2)
@@ -99,14 +98,18 @@ def create_crops_archive(image_path, raw_output, zip_path):
         print(f"Error creating zip: {e}")
         return False
 
-def get_text_from_image(filepath, mode="ocr"):
+def get_text_from_image(filepath, mode="ocr", custom_categories=None):
     try:
         image = Image.open(filepath).convert("RGB")
         
         # Determine task and categories based on mode
         if mode == "detection":
             task = "detection"
-            categories = ["person", "animal", "angel", "flower"]
+            # Use custom categories if provided, otherwise default fallback
+            if custom_categories:
+                categories = custom_categories
+            else:
+                categories = ["person", "animal", "angel", "flower"]
         else:
             # Default to OCR
             task = "ocr_box"
@@ -151,6 +154,13 @@ def index():
         file = request.files['file']
         mode = request.form.get('mode', 'ocr') # Get the selected mode, default to 'ocr'
         
+        # Get custom categories from form
+        custom_categories_str = request.form.get('custom_categories')
+        custom_categories = None
+        if custom_categories_str:
+            # Parse comma separated string into list
+            custom_categories = [x.strip() for x in custom_categories_str.split(',') if x.strip()]
+
         if file.filename == '':
             flash('Niciun fișier selectat')
             return redirect(request.url)
@@ -164,8 +174,8 @@ def index():
             flash('Imaginea a fost încărcată cu succes!')
 
             try:
-                # Pass the selected mode to the processing function
-                vis_image_pil, raw_output_text = get_text_from_image(filepath, mode)
+                # Pass the selected mode and categories to the processing function
+                vis_image_pil, raw_output_text = get_text_from_image(filepath, mode, custom_categories)
                 raw_output = raw_output_text
 
                 if vis_image_pil:
@@ -210,8 +220,6 @@ def index():
 
 @app.route("/reset")
 def reset():
-    # Simply redirecting to index (GET request) clears the state 
-    # because 'index' initializes variables to None on GET.
     return redirect(url_for('index'))
 
 # if __name__ == "__main__":

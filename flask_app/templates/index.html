@@ -4,137 +4,268 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Medieval Text Extractor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
     <style>
+      :root {
+        --primary-color: #5c4d3c;
+        --secondary-color: #8b7355;
+        --accent-color: #d4af37;
+        --background-color: #f4f1ea;
+        --card-bg: #ffffff;
+        --text-color: #333333;
+        --success-bg: #d4edda;
+        --success-text: #155724;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        font-family: sans-serif;
+        font-family: 'Lato', sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 40px 20px;
+        min-height: 100vh;
       }
 
-      h1,
+      h1 {
+        font-family: 'Cinzel', serif;
+        color: var(--primary-color);
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-align: center;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      }
+
+      h2, h3 {
+        font-family: 'Cinzel', serif;
+        color: var(--secondary-color);
+        margin-bottom: 15px;
+      }
+      
       h2 {
-        text-align: center;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 10px;
+        margin-top: 30px;
       }
 
+      .container {
+        width: 100%;
+        max-width: 1100px;
+        background: var(--card-bg);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        border: 1px solid #e6e6e6;
+      }
+
+      /* Form Styling */
       form {
-        margin-bottom: 20px;
-        text-align: center;
+        background-color: #fafafa;
+        padding: 30px;
+        border-radius: 8px;
+        border: 1px solid #eee;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
         align-items: center;
+        margin-bottom: 30px;
       }
 
-      select, input[type="file"], input[type="submit"], .btn-clear, .btn-download {
-        padding: 8px;
-        border-radius: 4px;
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      label {
+        font-weight: bold;
+        color: var(--primary-color);
+        font-size: 0.9rem;
+      }
+
+      select, input[type="text"], input[type="file"] {
+        padding: 12px;
+        border-radius: 6px;
         border: 1px solid #ccc;
-        font-size: 14px;
+        font-size: 1rem;
+        width: 100%;
+        transition: border-color 0.3s;
       }
 
+      select:focus, input[type="text"]:focus, input[type="file"]:focus {
+        border-color: var(--secondary-color);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.2);
+      }
+      
+      #categories-input {
+        display: none; /* Hidden by default */
+      }
+
+      /* Buttons */
+      .controls {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 10px;
+        width: 100%;
+      }
+
+      input[type="submit"], .btn-clear, .btn-download {
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: none;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      input[type="submit"] {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #4a3e30;
+        transform: translateY(-1px);
+      }
+
+      .btn-clear {
+        background-color: #e0e0e0;
+        color: #555;
+      }
+      
+      .btn-clear:hover {
+        background-color: #d0d0d0;
+        color: #333;
+      }
+
+      .btn-download {
+        background-color: var(--accent-color);
+        color: #fff;
+        margin-top: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      }
+      
+      .btn-download:hover {
+        background-color: #c19f32;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+      }
+
+      /* Flash Messages */
       .flash {
-        padding: 10px;
-        margin: 10px 0;
-        border-radius: 4px;
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
+        padding: 15px;
+        margin: 0 0 20px 0;
+        border-radius: 6px;
+        background: var(--success-bg);
+        color: var(--success-text);
+        border-left: 5px solid #28a745;
+        font-weight: 500;
+      }
+
+      /* Results Section */
+      .results-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
       }
 
       .image-comparison {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-around;
-        border-bottom: 2px solid #eee;
-        padding-bottom: 20px;
-        width: 100%;
-        max-width: 1200px;
+        gap: 30px;
+        justify-content: center;
+        margin-bottom: 40px;
       }
 
       .image-box {
-        flex-basis: 48%;
-        min-width: 300px;
-        box-sizing: border-box;
-        padding: 10px;
+        flex: 1 1 400px;
+        max-width: 500px;
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         text-align: center;
+        border: 1px solid #eee;
+        transition: transform 0.3s;
+      }
+      
+      .image-box:hover {
+        transform: translateY(-5px);
       }
 
       .image-box h3 {
         margin-top: 0;
-        color: #333;
+        font-size: 1.2rem;
+        color: var(--primary-color);
       }
 
       .image-box img {
-        max-width: 100%;
+        width: 100%;
         height: auto;
-        border: 1px solid #ddd;
         border-radius: 4px;
+        border: 1px solid #ddd;
       }
 
-      .container {
-        width: 90%;
-        max-width: 1200px;
-      }
-
+      /* Raw Output Block */
       .raw-output {
         margin-top: 20px;
       }
 
       .raw-output h2 {
         text-align: left;
-        color: #555;
+        font-size: 1.4rem;
       }
 
       .raw-output pre {
-        background-color: #272822;
+        background-color: #2b2b2b;
         color: #f8f8f2;
-        padding: 15px;
-        border-radius: 5px;
+        padding: 20px;
+        border-radius: 8px;
         overflow-x: auto;
         white-space: pre-wrap;
         word-wrap: break-word;
-      }
-
-      .btn-clear {
-        background-color: #f8f9fa;
-        color: #333;
-        text-decoration: none;
-        cursor: pointer;
-        display: inline-block;
-        margin-left: 10px;
+        font-family: 'Consolas', 'Monaco', monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        border-left: 5px solid var(--accent-color);
+        box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
       }
       
-      .btn-clear:hover {
-        background-color: #e2e6ea;
-      }
-
-      .btn-download {
-        background-color: #007bff;
-        color: white;
-        text-decoration: none;
-        display: inline-block;
-        margin-top: 10px;
-        font-weight: bold;
-      }
-      
-      .btn-download:hover {
-        background-color: #0056b3;
-      }
-      
-      .controls {
-          display: flex;
-          gap: 10px;
-          justify-content: center;
-          align-items: center;
-      }
-      
-      .results-header {
-          display: flex;
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+        
+        h1 {
+          font-size: 2rem;
+        }
+        
+        .controls {
           flex-direction: column;
-          align-items: center;
-          margin-bottom: 20px;
+        }
+        
+        input[type="submit"], .btn-clear {
+          width: 100%;
+        }
       }
     </style>
   </head>
@@ -142,54 +273,70 @@
     <div class="container">
       <h1>Medieval Pages</h1>
 
-      {% with messages = get_flashed_messages() %} {% if messages %} {% for
-      message in messages %}
-      <div class="flash">{{ message }}</div>
-      {% endfor %} {% endif %} {% endwith %}
+      {% with messages = get_flashed_messages() %} 
+        {% if messages %} 
+          {% for message in messages %}
+            <div class="flash">{{ message }}</div>
+          {% endfor %} 
+        {% endif %} 
+      {% endwith %}
 
       <form method="POST" enctype="multipart/form-data">
-        <select name="mode" id="mode">
-            <option value="ocr">OCR (Text Extraction)</option>
-            <option value="detection">Image Detection</option>
-        </select>
+        <div class="form-group">
+            <label for="mode">Select Processing Mode:</label>
+            <select name="mode" id="mode">
+                <option value="ocr">OCR (Text Extraction)</option>
+                <option value="detection">Image Detection</option>
+            </select>
+        </div>
+        
+        <!-- Input for dynamic categories -->
+        <div class="form-group" id="categories-container" style="display: none;">
+            <label for="categories-input">Custom Categories:</label>
+            <input 
+                type="text" 
+                name="custom_categories" 
+                id="categories-input" 
+                placeholder="e.g. person, horse, sword" 
+            />
+        </div>
 
-        <input type="file" name="file" required />
+        <div class="form-group">
+            <label for="file">Upload Image:</label>
+            <input type="file" name="file" id="file" required />
+        </div>
         
         <div class="controls">
-            <input type="submit" value="Încarcă și procesează" />
+            <input type="submit" value="Upload & Process" />
             <a href="{{ url_for('reset') }}" class="btn-clear">Reset App</a>
         </div>
       </form>
 
       {% if original_filename %}
-      <hr />
-      
       <div class="results-header">
-        <h2>Rezultate Procesare</h2>
+        <h2>Processing Results</h2>
         {% if zip_filename %}
             <a href="{{ url_for('static', filename='uploads/' + zip_filename) }}" class="btn-download" download>
-                ⬇️ Descarcă Arhiva (Decupaje & CSV)
+                ⬇️ Download Archive (Crops & CSV)
             </a>
         {% endif %}
       </div>
 
       <div class="image-comparison">
         <div class="image-box">
-          <h3>Imagine Originală</h3>
-
+          <h3>Original Image</h3>
           <img
             src="{{ url_for('static', filename='uploads/' + original_filename) }}"
-            alt="Imaginea Originală"
+            alt="Original Image"
           />
         </div>
 
         {% if visualized_filename %}
         <div class="image-box">
-          <h3>Rezultat Rex-Omni (Vizualizare)</h3>
-
+          <h3>Analysis Result</h3>
           <img
             src="{{ url_for('static', filename='uploads/' + visualized_filename) }}"
-            alt="Rezultat OCR"
+            alt="Analysis Result"
           />
         </div>
         {% endif %}
@@ -197,10 +344,35 @@
 
       {% if raw_output %}
       <div class="raw-output">
-        <h2>Raw Output Model</h2>
+        <h2>Raw Model Output</h2>
         <pre><code>{{ raw_output }}</code></pre>
       </div>
-      {% endif %} {% endif %}
+      {% endif %} 
+      {% endif %}
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modeSelect = document.getElementById('mode');
+            const categoriesContainer = document.getElementById('categories-container');
+            const categoriesInput = document.getElementById('categories-input');
+
+            function toggleCategories() {
+                if (modeSelect.value === 'detection') {
+                    categoriesContainer.style.display = 'flex';
+                    categoriesInput.style.display = 'block';
+                } else {
+                    categoriesContainer.style.display = 'none';
+                    categoriesInput.style.display = 'none';
+                }
+            }
+
+            // Listen for changes
+            modeSelect.addEventListener('change', toggleCategories);
+            
+            // Check initial state (e.g., after browser back button or refresh)
+            toggleCategories();
+        });
+    </script>
   </body>
 </html>
