@@ -145,7 +145,7 @@ class RexOmniWrapper:
                 self.model_path,
                 torch_dtype=kwargs.get("torch_dtype", torch.bfloat16),
                 attn_implementation=kwargs.get(
-                    "attn_implementation", "flash_attention_2"
+                    "attn_implementation", "eager"
                 ),
                 device_map=kwargs.get("device_map", "auto"),
                 trust_remote_code=kwargs.get("trust_remote_code", True),

@@ -18,7 +18,7 @@ model_path = "IDEA-Research/Rex-Omni"
 
 rex_model = RexOmniWrapper(
     model_path=model_path,
-    backend="vllm",  # Choose "transformers" or "vllm"
+    backend="transformers",  # Choose "transformers" or "vllm"
     max_tokens=2048,
     temperature=0.0,
     top_p=0.05,
@@ -222,5 +222,5 @@ def index():
 def reset():
     return redirect(url_for('index'))
 
-# if __name__ == "__main__":
-#     app.run(host="0.0.0.0", debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True)
