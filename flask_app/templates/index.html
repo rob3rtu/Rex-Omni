@@ -10,6 +10,7 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
+        font-family: sans-serif;
       }
 
       h1,
@@ -20,6 +21,17 @@
       form {
         margin-bottom: 20px;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+      }
+
+      select, input[type="file"], input[type="submit"], .btn-clear {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 14px; /* Ensure consistent font size */
       }
 
       .flash {
@@ -37,6 +49,8 @@
         justify-content: space-around;
         border-bottom: 2px solid #eee;
         padding-bottom: 20px;
+        width: 100%;
+        max-width: 1200px;
       }
 
       .image-box {
@@ -59,6 +73,11 @@
         border-radius: 4px;
       }
 
+      .container {
+        width: 90%;
+        max-width: 1200px;
+      }
+
       .raw-output {
         margin-top: 20px;
       }
@@ -77,6 +96,26 @@
         white-space: pre-wrap;
         word-wrap: break-word;
       }
+
+      .btn-clear {
+        background-color: #f8f9fa;
+        color: #333;
+        text-decoration: none;
+        cursor: pointer;
+        display: inline-block;
+        margin-left: 10px;
+      }
+      
+      .btn-clear:hover {
+        background-color: #e2e6ea;
+      }
+      
+      .controls {
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          align-items: center;
+      }
     </style>
   </head>
   <body>
@@ -89,8 +128,18 @@
       {% endfor %} {% endif %} {% endwith %}
 
       <form method="POST" enctype="multipart/form-data">
+        <select name="mode" id="mode">
+            <option value="ocr">OCR (Text Extraction)</option>
+            <option value="detection">Image Detection</option>
+        </select>
+
         <input type="file" name="file" required />
-        <input type="submit" value="Încarcă și procesează" />
+        
+        <div class="controls">
+            <input type="submit" value="Încarcă și procesează" />
+            <!-- Clear Button -->
+            <a href="{{ url_for('reset') }}" class="btn-clear">Reset App</a>
+        </div>
       </form>
 
       {% if original_filename %}

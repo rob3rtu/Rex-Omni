@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, url_for
 from rex_omni import RexOmniWrapper, RexOmniVisualize
 from PIL import Image
 
@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = 'EZEc6*AASw&&Zx'
 
-#Initialize the Rex-Omni OCR model
+# Initialize the Rex-Omni OCR model
 model_path = "IDEA-Research/Rex-Omni"
 
 rex_model = RexOmniWrapper(
@@ -23,12 +23,20 @@ rex_model = RexOmniWrapper(
     repetition_penalty=1.05,
 )
 
-def get_text_from_image(filepath):
+def get_text_from_image(filepath, mode="ocr"):
     try:
         image = Image.open(filepath).convert("RGB")
-        categories = ["word"]
+        
+        # Determine task and categories based on mode
+        if mode == "detection":
+            task = "detection"
+            categories = ["person", "animal", "angel", "flower"]
+        else:
+            # Default to OCR
+            task = "ocr_box"
+            categories = ["word"]
 
-        results = rex_model.inference(images=image, task="ocr_box", categories=categories)
+        results = rex_model.inference(images=image, task=task, categories=categories)
         result = results[0]
 
         raw_output = results[0]['raw_output']
@@ -64,6 +72,7 @@ def index():
             return redirect(request.url)
         
         file = request.files['file']
+        mode = request.form.get('mode', 'ocr') # Get the selected mode, default to 'ocr'
         
         if file.filename == '':
             flash('Niciun fișier selectat')
@@ -78,16 +87,18 @@ def index():
             flash('Imaginea a fost încărcată cu succes!')
 
             try:
-                vis_image_pil, raw_output_text = get_text_from_image(filepath)
+                # Pass the selected mode to the processing function
+                vis_image_pil, raw_output_text = get_text_from_image(filepath, mode)
                 raw_output = raw_output_text
 
                 if vis_image_pil:
                     name, ext = os.path.splitext(original_filename)
-                    visualized_filename = f"{name}_ocr{ext}"
+                    # Add mode to filename to prevent caching issues if switching modes on same image
+                    visualized_filename = f"{name}_{mode}_vis{ext}"
                     visualized_filepath = os.path.join(app.config['UPLOAD_FOLDER'], visualized_filename)
                     
                     vis_image_pil.save(visualized_filepath)
-                    flash('Imaginea a fost incarcata si procesata cu succes!')
+                    flash(f'Imaginea a fost procesata ({mode}) cu succes!')
                 else:
                     flash('Imaginea a fost incarcata, dar procesarea a esuat.')
 
@@ -105,6 +116,12 @@ def index():
                            original_filename=None, 
                            visualized_filename=None, 
                            raw_output=None)
+
+@app.route("/reset")
+def reset():
+    # Simply redirecting to index (GET request) clears the state 
+    # because 'index' initializes variables to None on GET.
+    return redirect(url_for('index'))
 
 # if __name__ == "__main__":
 #     app.run(host="0.0.0.0", debug=True)
