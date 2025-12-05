@@ -27,11 +27,11 @@
         align-items: center;
       }
 
-      select, input[type="file"], input[type="submit"], .btn-clear {
+      select, input[type="file"], input[type="submit"], .btn-clear, .btn-download {
         padding: 8px;
         border-radius: 4px;
         border: 1px solid #ccc;
-        font-size: 14px; /* Ensure consistent font size */
+        font-size: 14px;
       }
 
       .flash {
@@ -109,12 +109,32 @@
       .btn-clear:hover {
         background-color: #e2e6ea;
       }
+
+      .btn-download {
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 10px;
+        font-weight: bold;
+      }
+      
+      .btn-download:hover {
+        background-color: #0056b3;
+      }
       
       .controls {
           display: flex;
           gap: 10px;
           justify-content: center;
           align-items: center;
+      }
+      
+      .results-header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-bottom: 20px;
       }
     </style>
   </head>
@@ -137,14 +157,21 @@
         
         <div class="controls">
             <input type="submit" value="Încarcă și procesează" />
-            <!-- Clear Button -->
             <a href="{{ url_for('reset') }}" class="btn-clear">Reset App</a>
         </div>
       </form>
 
       {% if original_filename %}
       <hr />
-      <h2>Rezultate Procesare</h2>
+      
+      <div class="results-header">
+        <h2>Rezultate Procesare</h2>
+        {% if zip_filename %}
+            <a href="{{ url_for('static', filename='uploads/' + zip_filename) }}" class="btn-download" download>
+                ⬇️ Descarcă Arhiva (Decupaje & CSV)
+            </a>
+        {% endif %}
+      </div>
 
       <div class="image-comparison">
         <div class="image-box">
