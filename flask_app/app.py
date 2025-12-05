@@ -113,7 +113,7 @@ def get_text_from_image(filepath, mode="ocr", custom_categories=None):
         else:
             # Default to OCR
             task = "ocr_box"
-            categories = ["word"]
+            categories = ["line"]
 
         results = rex_model.inference(images=image, task=task, categories=categories)
         result = results[0]
