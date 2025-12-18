@@ -27,15 +27,10 @@ rex_model = RexOmniWrapper(
 )
 
 def create_crops_archive(image_path, raw_output, zip_path):
-    """
-    Parses raw_output, crops images, creates CSV, and saves to a zip file.
-    """
     try:
         img = Image.open(image_path).convert("RGB")
         width, height = img.size
         
-        # Regex to capture Label and Coordinate Block
-        # Looks for: <|object_ref_start|> LABEL <|object_ref_end|> <|box_start|> COORDS <|box_end|>
         pattern = r"<\|object_ref_start\|>(.*?)<\|object_ref_end\|>\s*<\|box_start\|>(.*?)<\|box_end\|>"
         matches = re.findall(pattern, raw_output)
         
@@ -46,10 +41,8 @@ def create_crops_archive(image_path, raw_output, zip_path):
             
             for label, box_str in matches:
                 label = label.strip()
-                # Extract all numbers from the coordinate string (ignoring commas and tags)
                 coords = [int(c) for c in re.findall(r"<(\d+)>", box_str)]
                 
-                # Process coordinates in groups of 4 (x1, y1, x2, y2)
                 for i in range(0, len(coords), 4):
                     if i + 3 >= len(coords):
                         break
@@ -62,29 +55,24 @@ def create_crops_archive(image_path, raw_output, zip_path):
                     x2 = int((n_x2 / 1000) * width)
                     y2 = int((n_y2 / 1000) * height)
                     
-                    # Basic validation to ensure positive area
                     if x2 <= x1 or y2 <= y1:
                         continue
                         
-                    # Crop
                     crop = img.crop((x1, y1, x2, y2))
                     
                     # Generate ID/Filename
                     crop_filename = f"crop_{crop_count:04d}.jpg"
                     
-                    # Save crop to memory and add to zip
                     img_byte_arr = BytesIO()
                     crop.save(img_byte_arr, format='JPEG')
                     zipf.writestr(crop_filename, img_byte_arr.getvalue())
                     
-                    # Add to data list
                     crops_data.append([crop_filename, label])
                     crop_count += 1
             
             # Create CSV content
             csv_output = "image_id,object_name\n"
             for filename, lbl in crops_data:
-                # Simple CSV escaping for the label
                 clean_label = lbl.replace('"', '""')
                 if ',' in clean_label:
                     clean_label = f'"{clean_label}"'
@@ -98,20 +86,17 @@ def create_crops_archive(image_path, raw_output, zip_path):
         print(f"Error creating zip: {e}")
         return False
 
-def get_text_from_image(filepath, mode="ocr", custom_categories=None):
+def process_image(filepath, mode="ocr", custom_categories=None):
     try:
         image = Image.open(filepath).convert("RGB")
         
-        # Determine task and categories based on mode
         if mode == "detection":
             task = "detection"
-            # Use custom categories if provided, otherwise default fallback
             if custom_categories:
                 categories = custom_categories
             else:
                 categories = ["person", "animal", "angel", "flower"]
         else:
-            # Default to OCR
             task = "ocr_box"
             categories = ["line"]
 
@@ -152,13 +137,11 @@ def index():
             return redirect(request.url)
         
         file = request.files['file']
-        mode = request.form.get('mode', 'ocr') # Get the selected mode, default to 'ocr'
+        mode = request.form.get('mode', 'ocr')
         
-        # Get custom categories from form
         custom_categories_str = request.form.get('custom_categories')
         custom_categories = None
         if custom_categories_str:
-            # Parse comma separated string into list
             custom_categories = [x.strip() for x in custom_categories_str.split(',') if x.strip()]
 
         if file.filename == '':
@@ -174,29 +157,26 @@ def index():
             flash('Imaginea a fost încărcată cu succes!')
 
             try:
-                # Pass the selected mode and categories to the processing function
-                vis_image_pil, raw_output_text = get_text_from_image(filepath, mode, custom_categories)
+                vis_image_pil, raw_output_text = process_image(filepath, mode, custom_categories)
                 raw_output = raw_output_text
 
                 if vis_image_pil:
                     name, ext = os.path.splitext(original_filename)
-                    # Add mode to filename to prevent caching issues
                     visualized_filename = f"{name}_{mode}_vis{ext}"
                     visualized_filepath = os.path.join(app.config['UPLOAD_FOLDER'], visualized_filename)
                     
                     vis_image_pil.save(visualized_filepath)
                     flash(f'Imaginea a fost procesata ({mode}) cu succes!')
                     
-                    # --- Generate ZIP Archive ---
+
                     zip_name = f"{name}_{mode}_crops.zip"
                     zip_path = os.path.join(app.config['UPLOAD_FOLDER'], zip_name)
                     
                     if create_crops_archive(filepath, raw_output, zip_path):
                         zip_filename = zip_name
-                        flash('Arhivă cu decupaje generată!')
+                        flash('Data Set generat!')
                     else:
-                        flash('Nu s-au putut genera decupajele (niciun obiect găsit sau eroare).')
-                    # ----------------------------
+                        flash('Nu s-a putut genera un Data Set (niciun obiect găsit sau eroare).')
                     
                 else:
                     flash('Imaginea a fost incarcata, dar procesarea a esuat.')

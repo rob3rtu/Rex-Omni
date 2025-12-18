@@ -3,8 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Medieval Text Extractor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <title>Datasets Generator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Lato:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
         --primary-color: #5c4d3c;
@@ -26,7 +29,7 @@
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        font-family: 'Lato', sans-serif;
+        font-family: "Lato", sans-serif;
         background-color: var(--background-color);
         color: var(--text-color);
         margin: 0;
@@ -35,20 +38,21 @@
       }
 
       h1 {
-        font-family: 'Cinzel', serif;
+        font-family: "Cinzel", serif;
         color: var(--primary-color);
         font-size: 2.5rem;
         margin-bottom: 10px;
         text-align: center;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
       }
 
-      h2, h3 {
-        font-family: 'Cinzel', serif;
+      h2,
+      h3 {
+        font-family: "Cinzel", serif;
         color: var(--secondary-color);
         margin-bottom: 15px;
       }
-      
+
       h2 {
         border-bottom: 2px solid #e0e0e0;
         padding-bottom: 10px;
@@ -61,11 +65,10 @@
         background: var(--card-bg);
         padding: 40px;
         border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         border: 1px solid #e6e6e6;
       }
 
-      /* Form Styling */
       form {
         background-color: #fafafa;
         padding: 30px;
@@ -92,7 +95,9 @@
         font-size: 0.9rem;
       }
 
-      select, input[type="text"], input[type="file"] {
+      select,
+      input[type="text"],
+      input[type="file"] {
         padding: 12px;
         border-radius: 6px;
         border: 1px solid #ccc;
@@ -101,17 +106,18 @@
         transition: border-color 0.3s;
       }
 
-      select:focus, input[type="text"]:focus, input[type="file"]:focus {
+      select:focus,
+      input[type="text"]:focus,
+      input[type="file"]:focus {
         border-color: var(--secondary-color);
         outline: none;
         box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.2);
       }
-      
+
       #categories-input {
-        display: none; /* Hidden by default */
+        display: none;
       }
 
-      /* Buttons */
       .controls {
         display: flex;
         gap: 15px;
@@ -120,7 +126,9 @@
         width: 100%;
       }
 
-      input[type="submit"], .btn-clear, .btn-download {
+      input[type="submit"],
+      .btn-clear,
+      .btn-download {
         padding: 12px 24px;
         border-radius: 6px;
         font-size: 1rem;
@@ -149,7 +157,7 @@
         background-color: #e0e0e0;
         color: #555;
       }
-      
+
       .btn-clear:hover {
         background-color: #d0d0d0;
         color: #333;
@@ -159,16 +167,15 @@
         background-color: var(--accent-color);
         color: #fff;
         margin-top: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
-      
+
       .btn-download:hover {
         background-color: #c19f32;
         transform: translateY(-1px);
-        box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
       }
 
-      /* Flash Messages */
       .flash {
         padding: 15px;
         margin: 0 0 20px 0;
@@ -179,7 +186,6 @@
         font-weight: 500;
       }
 
-      /* Results Section */
       .results-header {
         display: flex;
         flex-direction: column;
@@ -201,12 +207,12 @@
         background: #fff;
         padding: 15px;
         border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         text-align: center;
         border: 1px solid #eee;
         transition: transform 0.3s;
       }
-      
+
       .image-box:hover {
         transform: translateY(-5px);
       }
@@ -224,7 +230,6 @@
         border: 1px solid #ddd;
       }
 
-      /* Raw Output Block */
       .raw-output {
         margin-top: 20px;
       }
@@ -242,73 +247,50 @@
         overflow-x: auto;
         white-space: pre-wrap;
         word-wrap: break-word;
-        font-family: 'Consolas', 'Monaco', monospace;
+        font-family: "Consolas", "Monaco", monospace;
         font-size: 0.9rem;
         line-height: 1.5;
         border-left: 5px solid var(--accent-color);
-        box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-      }
-      
-      /* Responsive */
-      @media (max-width: 768px) {
-        .container {
-          padding: 20px;
-        }
-        
-        h1 {
-          font-size: 2rem;
-        }
-        
-        .controls {
-          flex-direction: column;
-        }
-        
-        input[type="submit"], .btn-clear {
-          width: 100%;
-        }
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Medieval Pages</h1>
+      <h1>Datasets Generator</h1>
 
-      {% with messages = get_flashed_messages() %} 
-        {% if messages %} 
-          {% for message in messages %}
-            <div class="flash">{{ message }}</div>
-          {% endfor %} 
-        {% endif %} 
-      {% endwith %}
+      {% with messages = get_flashed_messages() %} {% if messages %} {% for
+      message in messages %}
+      <div class="flash">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
 
       <form method="POST" enctype="multipart/form-data">
         <div class="form-group">
-            <label for="mode">Select Processing Mode:</label>
-            <select name="mode" id="mode">
-                <option value="ocr">OCR (Text Extraction)</option>
-                <option value="detection">Image Detection</option>
-            </select>
+          <label for="mode">Select Processing Mode:</label>
+          <select name="mode" id="mode">
+            <option value="ocr">OCR (Text Extraction)</option>
+            <option value="detection">Image Detection</option>
+          </select>
         </div>
-        
-        <!-- Input for dynamic categories -->
-        <div class="form-group" id="categories-container" style="display: none;">
-            <label for="categories-input">Custom Categories:</label>
-            <input 
-                type="text" 
-                name="custom_categories" 
-                id="categories-input" 
-                placeholder="e.g. person, horse, sword" 
-            />
+
+        <div class="form-group" id="categories-container" style="display: none">
+          <label for="categories-input">Custom Categories:</label>
+          <input
+            type="text"
+            name="custom_categories"
+            id="categories-input"
+            placeholder="e.g. person, horse, sword"
+          />
         </div>
 
         <div class="form-group">
-            <label for="file">Upload Image:</label>
-            <input type="file" name="file" id="file" required />
+          <label for="file">Upload Image:</label>
+          <input type="file" name="file" id="file" required />
         </div>
-        
+
         <div class="controls">
-            <input type="submit" value="Upload & Process" />
-            <a href="{{ url_for('reset') }}" class="btn-clear">Reset App</a>
+          <input type="submit" value="Upload & Process" />
+          <a href="{{ url_for('reset') }}" class="btn-clear">Reset App</a>
         </div>
       </form>
 
@@ -316,9 +298,13 @@
       <div class="results-header">
         <h2>Processing Results</h2>
         {% if zip_filename %}
-            <a href="{{ url_for('static', filename='uploads/' + zip_filename) }}" class="btn-download" download>
-                ⬇️ Download Archive (Crops & CSV)
-            </a>
+        <a
+          href="{{ url_for('static', filename='uploads/' + zip_filename) }}"
+          class="btn-download"
+          download
+        >
+          ⬇️ Download Archive (Crops & CSV)
+        </a>
         {% endif %}
       </div>
 
@@ -347,32 +333,31 @@
         <h2>Raw Model Output</h2>
         <pre><code>{{ raw_output }}</code></pre>
       </div>
-      {% endif %} 
-      {% endif %}
+      {% endif %} {% endif %}
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const modeSelect = document.getElementById('mode');
-            const categoriesContainer = document.getElementById('categories-container');
-            const categoriesInput = document.getElementById('categories-input');
+      document.addEventListener("DOMContentLoaded", function () {
+        const modeSelect = document.getElementById("mode");
+        const categoriesContainer = document.getElementById(
+          "categories-container"
+        );
+        const categoriesInput = document.getElementById("categories-input");
 
-            function toggleCategories() {
-                if (modeSelect.value === 'detection') {
-                    categoriesContainer.style.display = 'flex';
-                    categoriesInput.style.display = 'block';
-                } else {
-                    categoriesContainer.style.display = 'none';
-                    categoriesInput.style.display = 'none';
-                }
-            }
+        function toggleCategories() {
+          if (modeSelect.value === "detection") {
+            categoriesContainer.style.display = "flex";
+            categoriesInput.style.display = "block";
+          } else {
+            categoriesContainer.style.display = "none";
+            categoriesInput.style.display = "none";
+          }
+        }
 
-            // Listen for changes
-            modeSelect.addEventListener('change', toggleCategories);
-            
-            // Check initial state (e.g., after browser back button or refresh)
-            toggleCategories();
-        });
+        modeSelect.addEventListener("change", toggleCategories);
+
+        toggleCategories();
+      });
     </script>
   </body>
 </html>
